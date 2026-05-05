@@ -13,6 +13,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: core
+
     services:
       postgres:
         image: postgres:15
@@ -22,11 +26,6 @@ jobs:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - uses: actions/checkout@v4
@@ -37,8 +36,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r ../requirements.txt
 
       - name: Set environment variables
         run: |
@@ -59,7 +57,7 @@ jobs:
 
       - name: Run migrations
         run: |
-          python core/manage.py migrate
+          python manage.py migrate
 
       - name: Run tests
         run: |
