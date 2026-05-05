@@ -48,6 +48,7 @@ jobs:
           echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
           echo "DB_HOST=localhost" >> $GITHUB_ENV
           echo "DB_PORT=5432" >> $GITHUB_ENV
+          echo "SECRET_KEY=testsecretkey" >> $GITHUB_ENV
 
       - name: Run migrations
         run: |
