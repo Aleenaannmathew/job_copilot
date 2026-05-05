@@ -29,16 +29,15 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Set environment variables
@@ -46,9 +45,17 @@ jobs:
           echo "DB_NAME=test_db" >> $GITHUB_ENV
           echo "DB_USER=postgres" >> $GITHUB_ENV
           echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
-          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
           echo "DB_PORT=5432" >> $GITHUB_ENV
           echo "SECRET_KEY=testsecretkey" >> $GITHUB_ENV
+
+      - name: Wait for PostgreSQL
+        run: |
+          sudo apt-get install -y postgresql-client
+          until pg_isready -h 127.0.0.1 -p 5432; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
 
       - name: Run migrations
         run: |
